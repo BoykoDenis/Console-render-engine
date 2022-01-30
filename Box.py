@@ -18,11 +18,12 @@ class Box:
 
     def distance(self, pointX, pointY, pointZ):
 
-        relative_vector = [self.global_vector[0] - pointX, self.global_vector[1] - pointY, self.global_vector[2] - pointZ]
+        relative_vector = Matrix(matrix = [self.global_vector[0] - pointX, self.global_vector[1] - pointY, self.global_vector[2] - pointZ])
+        base_vector = self.convertion(relative_vector)
 
-        return max(abs(self.global_vector[0] - pointX) - self.width//2,
-                   abs(self.global_vector[1] - pointY) - self.lenght//2,
-                   abs(self.global_vector[2] - pointZ) - self.hight//2)
+        return max(abs(relative_vector[0]) - self.width//2,
+                   abs(relative_vector[1]) - self.lenght//2,
+                   abs(relative_vector[2]) - self.hight//2)
 
 
     #def convert_from_global_2_local_cords():
@@ -30,7 +31,9 @@ class Box:
         self.convertion_matrix = Matrix.multiply_without_saving(self.base_vectors.calculate_inverse(), self.kanon)
 
 
-    def convertion(self, point_vector_global):
+    def convertion(self, relative_vector):
+        self.calc_convert_matrix_kan_2_base()
+        return Matrix.multiply_without_saving(self.convertion_kan_2_base, relative_vector)
 
 
 
