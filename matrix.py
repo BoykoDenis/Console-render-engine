@@ -246,6 +246,7 @@ class Matrix():
         pivot_pos = srow # describes the pivot row, plays role of a flag to determine the next step of gaus elimination
         # gause elimination
         while col != None:
+
             for row in range(pivot_pos + 1, self.get_dims()[0]):
                 if self.REF[row][col] == 0:
                     continue
@@ -372,7 +373,7 @@ class Matrix():
         """
         if self:
             if self.matrix != [[]]:
-                matrix = self.matrix
+                matrix = self.get_matrix()
             elif matrix:
                 pass
             else:
@@ -588,10 +589,10 @@ class Matrix():
         Returns:
             bool: [is square]
         """
-        return self.dims[0] == 2
+        return self.get_dims()[0] == 2
 
     def __is3d(self) -> bool:
-        return self.dims[0] == 3
+        return self.get_dims()[0] == 3
 
 
     def __get_determinant(self):
@@ -711,7 +712,7 @@ class Matrix():
 
 
 
-    def rotate(self, angle, axe):
+    def rotate(self, axis, angle):
         """
         rotate [rotate vector by the angle provided]
 
@@ -723,44 +724,45 @@ class Matrix():
             MatrixException: [not supported size]
         """
 
-        if self.__is_vector():
-            if self.__is2d():
+
+        if self.__is2d():
+            self.rotation_matrix = Matrix(
+                                            dims = [2, 2],
+                                            matrix = [[cos(radians(angle)), -sin(radians(angle))],
+                                                    [sin(radians(angle)), cos(radians(angle))]]
+                                            )
+
+            self.matrix = Matrix.multiply_without_saving(self.rotation_matrix, self).get_matrix()
+            self.__reset()
+
+        if self.__is3d():
+            if axis == 'x':
                 self.rotation_matrix = Matrix(
-                                              dims = [2, 2],
-                                              matrix = [[cos(radians(angle)), -sin(radians(angle))],
-                                                        [sin(radians(angle)), cos(radians(angle))]]
-                                             )
+                                            dims = [3, 3],
+                                            matrix = [[1, 0, 0],
+                                                    [0, cos(radians(angle)), -sin(radians(angle))],
+                                                    [0, sin(radians(angle)), cos(radians(angle))]]
+                                            )
 
-                self.matrix = Matrix.multiply_without_saving(self.rotation_matrix, self)
-                self.__reset()
+            if axis == 'y':
+                self.rotation_matrix = Matrix(
+                                            dims = [3, 3],
+                                            matrix = [[cos(radians(angle)), 0, sin(radians(angle))],
+                                                    [0, 1, 0],
+                                                    [-sin(radians(angle)), 0, cos(radians(angle))]]
+                                            )
 
-            if self.__is3d():
-                if axe == 'x':
-                    self.rotation_matrix = Matrix(
-                                              dims = [3, 3],
-                                              matrix = [[1, 0, 0],
-                                                        [0, cos(radians(angle)), -sin(radians(angle))],
-                                                        [0, sin(radians(angle)), cos(radians(angle))]]
-                                             )
+            if axis == 'z':
+                self.rotation_matrix = Matrix(
+                                            dims = [3, 3],
+                                            matrix = [[cos(radians(angle)), -sin(radians(angle)), 0],
+                                                    [sin(radians(angle)), cos(radians(angle)), 0],
+                                                    [0, 0, 1]]
+                                            )
 
-                if axe == 'y':
-                    self.rotation_matrix = Matrix(
-                                              dims = [3, 3],
-                                              matrix = [[cos(radians(angle)), 0, sin(radians(angle))],
-                                                        [0, 1, 0]
-                                                        [-sin(radians(angle)), 0, cos(radians(angle))]]
-                                             )
-
-                if axe == 'z':
-                    self.rotation_matrix = Matrix(
-                                              dims = [3, 3],
-                                              matrix = [[cos(radians(angle)), -sin(radians(angle)), 0],
-                                                        [sin(radians(angle)), cos(radians(angle)), 0],
-                                                        [0, 0, 1]]
-                                             )
+            self.matrix = Matrix.multiply_without_saving(self.rotation_matrix, self).get_matrix()
+            self.__reset()
 
 
-            else:
-                raise MatrixException('only 2d space rotation is supported')
 
 

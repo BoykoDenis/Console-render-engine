@@ -11,12 +11,15 @@ class Camera:
         self.camera_vector = [1, 0, 0] # camera view direction
         self.convertion_matrix_base_2_kan = Matrix()
         self.scene = scene
-        self.raylimit = 100 #raymarching limit per pixel
-        self.resolution = [102, 70]
+        self.raylimit = 5 #raymarching limit per pixel
+        self.resolution = [51, 35]
+        self.total_pixels = self.resolution[0]*self.resolution[1]
+        self.complited_pixels = 0
         self.centerX = self.resolution[0] // 2
         self.centerY = self.resolution[1] // 2
         self.eyedistance = 10
         self.frame = [['.' for _ in range(self.resolution[0])] for _ in range(self.resolution[1])]
+        self.distance_factor = 0.1
 
     def ray_marching(self, camera_scale):
 
@@ -36,8 +39,9 @@ class Camera:
                 for i in range(self.raylimit):
                     distance = self.__min_distance(x, y, z)
 
-                    if distance <= 0.01:
+                    if distance <= self.distance_factor:
                         self.frame[py][px] = '#'
+                        self.complited_pixels += 1
                         break
 
                     scale = last_size + distance / last_size
@@ -59,13 +63,11 @@ class Camera:
 
     def next_frame(self):
         os.system('cls')
-        for object in self.scene:
-            if object.animation:
-                object.animation_step()
         for row in self.frame:
             for col in row:
-                print(col, end = '')
+                print(col, end = ' ')
             print()
+        self.reset_frame()
 
 
 
@@ -80,3 +82,9 @@ class Camera:
     def convertion(self, relative_vector):
         self.calc_convert_matrix_kan_2_base()
         return Matrix.multiply_without_saving(self.convertion_kan_2_base, relative_vector)
+
+
+    def reset_frame(self):
+        for x in range(len(self.frame)):
+            for y in range(len(self.frame[0])):
+                self.frame[x][y] = '.'

@@ -18,9 +18,9 @@ class Box:
 
     def distance(self, pointX, pointY, pointZ):
 
-        matrix_premade = [[self.global_vector[0] - pointX], [self.global_vector[1] - pointY], [self.global_vector[2] - pointZ]]
+        matrix_premade = [[pointX - self.global_vector[0]], [pointY - self.global_vector[1]], [pointZ - self.global_vector[2]]]
         relative_vector = Matrix(dims = [3, 1], matrix = matrix_premade)
-        base_vector = self.convertion(relative_vector)
+        relative_vector = self.convertion(relative_vector)
         relative_vector = relative_vector.get_matrix()
         return max(abs(relative_vector[0][0]) - self.width//2,
                    abs(relative_vector[1][0]) - self.lenght//2,
@@ -35,6 +35,14 @@ class Box:
     def convertion(self, relative_vector):
         self.calc_convert_matrix_kan_2_base()
         return Matrix.multiply_without_saving(self.convertion_kan_2_base, relative_vector)
+
+    def rotate(self, axis, angle):
+        self.base_vectors.rotate(axis, angle)
+
+
+    
+
+
 
 
 
