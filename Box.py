@@ -40,7 +40,7 @@ class Box:
         self.base_vectors.rotate(axis, angle)
 
 
-    
+
 
 
 
